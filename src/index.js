@@ -6,7 +6,7 @@ const { oidc } = require('./auth')
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
-app.use(oidc);
+app.use(oidc); // dodaje rute /login, /logout, /callback 
 
 app.use('/', webRouter);
 

@@ -34,4 +34,19 @@ async function getPass(id) {
     return rows[0];
 }
 
-module.exports = { pool, initDb, getCountsAll, getCountsActive, getPass };
+async function listPasses() {
+    const { rows } = await pool.query('SELECT * from passes ORDER BY issued_at DESC');
+    return rows;
+}
+
+async function cancelPass(id) {
+    if (!UUID_RE.test(id)) return undefined;
+    const { rows } = await pool.query(`UPDATE passes set status = 'CANCELLED' WHERE id = $1`, [id]);
+}
+
+async function deletePass(id) {
+    if (!UUID_RE.test(id)) return undefined;
+    const { rows } = await pool.query(`DELETE from passes where id = $1`, [id]);
+}
+
+module.exports = { pool, initDb, getCountsAll, getCountsActive, getPass, listPasses, cancelPass, deletePass };
