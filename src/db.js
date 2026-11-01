@@ -49,4 +49,8 @@ async function deletePass(id) {
     const { rows } = await pool.query(`DELETE from passes where id = $1`, [id]);
 }
 
-module.exports = { pool, initDb, getCountsAll, getCountsActive, getPass, listPasses, cancelPass, deletePass };
+async function createPass(id, name, document) {
+    await pool.query(`INSERT INTO passes (id, name, document) VALUES($1, $2, $3)`, [id, name, document]);
+}
+
+module.exports = { pool, initDb, getCountsAll, getCountsActive, getPass, listPasses, cancelPass, deletePass, createPass };
