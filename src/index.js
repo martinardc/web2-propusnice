@@ -2,8 +2,11 @@ const express = require('express');
 const config = require('./config');
 const { initDb } = require('./db');
 const webRouter = require('./routes/web');
+const { oidc } = require('./auth')
 
 const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(oidc);
 
 app.use('/', webRouter);
 

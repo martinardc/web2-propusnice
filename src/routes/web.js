@@ -4,10 +4,19 @@ const { esc } = require('../utils');
 
 const router = express.Router();
 
-router.get('/', async(req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
         const allPasses = await db.getCountsAll();
         const activePasses = await db.getCountsActive();
+
+        let auth = '';
+        if (req.oidc.isAuthenticated()) {
+            const who = req.oidc.user.email || req.oidc.user.name;
+            auth = `<p>Prijavljena: ${esc(who)} | <a href="/logout">Odjava</a></p>`;
+        } else {
+            auth = `<p><a href="/login">Prijava</a></p>`;
+        }
+
         res.send(`
             <style>
                 body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
@@ -15,9 +24,10 @@ router.get('/', async(req, res, next) => {
             </style>
             <h1>Digitalne propusnice</h1>
             <p>Ukupno: <span class="broj">${allPasses.total}</span></p>
-            <p>Aktivne: <span class="broj">${activePasses.total}</span></p>     
-        `)
-    } catch(err) {
+            <p>Aktivne: <span class="broj">${activePasses.total}</span></p>
+            ${auth}
+        `);
+    } catch (err) {
         next(err);
     }
 });
@@ -36,8 +46,9 @@ router.get('/info/:id', async(req, res, next) => {
             <p>Status: <span class="broj">${pass.status}</span></p>
             <p>Ime i prezime: ${esc(pass.name)}</p>
             <p>Dokument: ${esc(pass.document)}</p>
-            <p>Izdano: ${pass.issued_at.toISOString()}</p>        
-        `)
+            <p>Izdano: ${pass.issued_at.toISOString()}</p>`
+        )
+
     } catch(err) {
         next(err)
     }
