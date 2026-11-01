@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const config = require('./config');
+const { UUID_RE } =require('./utils');
 
 const pool = new Pool({
     connectionString: config.databaseUrl,
@@ -17,4 +18,20 @@ async function initDb() {
     )`);
 }
 
-module.exports = { pool, initDb };
+async function getCountsAll() {
+    const {rows} = await pool.query('SELECT count(*)::int AS total from passes')
+    return rows[0]
+}
+
+async function getCountsActive() {
+    const { rows } = await pool.query(`SELECT count(*)::int AS total FROM passes WHERE status = 'ACTIVE'`)
+    return rows[0]
+}
+
+async function getPass(id) {
+    if (!UUID_RE.test(id)) return undefined;
+    const { rows } = await pool.query('SELECT * from passes where id = $1', [id])
+    return rows[0];
+}
+
+module.exports = { pool, initDb, getCountsAll, getCountsActive, getPass };
