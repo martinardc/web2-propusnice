@@ -9,4 +9,5 @@ module.exports = {
     auth0Domain: process.env.AUTH0_DOMAIN,
     webClientId: process.env.AUTH0_WEB_CLIENT_ID,
     webClientSecret: process.env.AUTH0_WEB_CLIENT_SECRET,
+    auth0Audience: process.env.AUTH0_AUDIENCE,
 };
